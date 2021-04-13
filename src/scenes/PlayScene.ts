@@ -65,25 +65,29 @@ export class PlayScene extends Phaser.Scene{
         let ground = map.createLayer("Tile Layer 1",[terrain],0,0)
         let river = map.createLayer("Tile Layer 2", [terrain],0,0)
         this.physics.world.setBounds(0,0,map.widthInPixels,map.heightInPixels)
-        this.mage = new Player(this,map.width,map.height,"Mage","String",0)
+        this.mage = new Player(this,map.width,map.height,"Mage",0)
         this.mage.setCollideWorldBounds(true)
         this.mage.setSize(45,52).setOffset(10,10)
         this.keyboard = this.input.keyboard.addKeys("W, A, S, D")
         this.cameras.main.setSize(800,600);
         this.cameras.main.startFollow(this.mage)
+        this.physics.add.collider(this.mage,ground)
+        this.physics.add.collider(this.mage,river)
+        river.setCollisionByProperty({collideable:true})
+        
     }
     update(time:number,delta:number){
         if(this.keyboard.D.isDown === true){
-            this.mage.setVelocityX(100)
+            this.mage.setVelocityX(250)
         }
         if(this.keyboard.A.isDown === true){
-            this.mage.setVelocityX(-100)
+            this.mage.setVelocityX(-250)
         }
         if(this.keyboard.W.isDown === true){
-            this.mage.setVelocityY(-100)
+            this.mage.setVelocityY(-250)
         }
         if(this.keyboard.S.isDown === true){
-            this.mage.setVelocityY(100)
+            this.mage.setVelocityY(250)
         }
         if(this.keyboard.A.isUp && this.keyboard.D.isUp){
             this.mage.setVelocityX(0)
