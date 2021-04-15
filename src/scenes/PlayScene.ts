@@ -1,5 +1,5 @@
 import {CST} from"../CST"
-import { Player } from "./Player";
+import { Player } from "../components/playerComponents/Player";
 export class PlayScene extends Phaser.Scene{
     mage!:Phaser.Physics.Arcade.Sprite
     constructor(){

@@ -1,5 +1,8 @@
+import SpellBook from "./spellbook/spellbook";
+
 export class Player extends Phaser.Physics.Arcade.Sprite{
     keyboard: Phaser.Types.Input.Keyboard.CursorKeys;
+    spellbook:SpellBook
     constructor(scene:Phaser.Scene, x:number,y:number, textrue:string,
         keyboard:Phaser.Types.Input.Keyboard.CursorKeys,frame?:string | number){
         super(scene,x,y,textrue,frame);
@@ -10,9 +13,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         this.setOrigin(0,0)
         scene.physics.world.enableBody(this)
         this.setCollideWorldBounds(true)
-        this.setSize(45,52).setOffset(10,10)
-        this.keyboard = keyboard
-        
+        this.setSize(35,32).setOffset(15,30)
+        this.keyboard = keyboard;
+        this.spellbook = new SpellBook();
 
         this.preload()
     }
@@ -66,10 +69,19 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
                 end:26
             }),
             repeat: -1
-        });    }
+        });    
+
+        this.scene.input.on('pointerdown',(pointer:any) =>{
+            this.Casting()
+        },this.scene)
+        
+    }
 
     update(){
         this.Movement()
+    }
+    Casting(){
+      this.spellbook.CastCurrentSpell()
     }
     Movement() {
         if(this.keyboard.right.isDown === true){
