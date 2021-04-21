@@ -32,6 +32,25 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
     }
     create(){
         this.anims.create({
+            key:"up",
+            frameRate:7,
+            frames:this.anims.generateFrameNames("Mage",{
+                start:1,
+                end:8
+            }),
+            repeat: -1
+            
+        });
+        this.anims.create({
+            key:"idle-up",
+            frameRate:1,
+            frames:this.anims.generateFrameNames("Mage",{
+                start:0,
+                end:0
+            }),
+            repeat: -1
+        });
+        this.anims.create({
             key:"left",
             frameRate:7,
             frames:this.anims.generateFrameNames("Mage",{
@@ -41,23 +60,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
             repeat: -1
         });
         this.anims.create({
-            key:"right",
-            frameRate:7,
+            key:"idle-left",
+            frameRate:1,
             frames:this.anims.generateFrameNames("Mage",{
-                start:27,
-                end:37
+                start:9,
+                end:9
             }),
             repeat: -1
-        });
-        this.anims.create({
-            key:"up",
-            frameRate:7,
-            frames:this.anims.generateFrameNames("Mage",{
-                start:1,
-                end:8
-            }),
-            repeat: -1
-            
         });
         this.anims.create({
             key:"down",
@@ -69,27 +78,37 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
             repeat: -1
         });
         this.anims.create({
-            key:"idle",
+            key:"idle-down",
             frameRate:1,
             frames:this.anims.generateFrameNames("Mage",{
-                start:26,
-                end:26
+                start:18,
+                end:18
             }),
             repeat: -1
         });    
-
+        this.anims.create({
+            key:"right",
+            frameRate:7,
+            frames:this.anims.generateFrameNames("Mage",{
+                start:27,
+                end:37
+            }),
+            repeat: -1
+        });
+        this.anims.create({
+            key:"idle-right",
+            frameRate:1,
+            frames:this.anims.generateFrameNames("Mage",{
+                start:27,
+                end:27
+            }),
+            repeat: -1
+        });
         this.scene.input.on('pointerdown',(pointer:any) =>{
             this.Casting()
         },this.scene)
-        this.setActive(true)
-    }
 
-    update(){
-        this.Movement()
-        this.ChangeSpell()
-        this.spellManager.update()
-    }
-    ChangeSpell(){
+
         this.keyboard.on('keydown-ONE',()=>{
             this.currentSpell = 0
         })
@@ -99,36 +118,51 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         this.keyboard.on('keydown-THREE',()=>{
             this.currentSpell = 2
         })
-    }
-    Casting(){
-        this.spellManager.CreateNewSlell(this.currentSpell,this.body.x,this.body.y)
-    }
-    Movement() {
-
         this.keyboard.on('keydown-D',()=>{
             this.setVelocityX(250)
         },this)
         this.keyboard.on('keyup-D',()=>{
             this.setVelocityX(0)
+            this.play('idle-right',true)
+
         },this)
         this.keyboard.on('keydown-A',() =>{
             this.setVelocityX(-250)
         },this)
         this.keyboard.on('keyup-A',()=>{
             this.setVelocityX(0)
+            this.play('idle-left',true)
+
         },this)
         this.keyboard.on('keydown-W',() =>{
             this.setVelocityY(-250)
         })
         this.keyboard.on('keyup-W',()=>{
             this.setVelocityY(0)
+            this.play('idle-up',true)
         },this)
         this.keyboard.on('keydown-S',()=>{
             this.setVelocityY(250)
         })
         this.keyboard.on('keyup-S',()=>{
             this.setVelocityY(0)
+            this.play('idle-down',true)
+
         },this)
+    }
+
+    update(){
+        this.Movement()
+        this.ChangeSpell()
+        this.spellManager.update()
+    }
+    ChangeSpell(){
+       
+    }
+    Casting(){
+        this.spellManager.CreateNewSlell(this.currentSpell,this.body.x,this.body.y)
+    }
+    Movement() {
 
         this.body.velocity.normalize().scale(100)
         if(this.body.velocity.x > 0 || this.body.velocity.x < 0 ||
@@ -146,8 +180,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
             else if(this.body.velocity.y > 0){
                 this.play("down",true)
             }
-        }else{
-            this.play("idle",true)
         }
         
     }

@@ -7,7 +7,6 @@ export default class Spell{
         this.name = name
         this.scene = scene
         this.sprite = this.scene.physics.add.sprite(playerX,playerY,this.name)
-        this.sprite.play("fireBall")
 
     }
     Move(){
