@@ -19,8 +19,7 @@ export class PlayScene extends Phaser.Scene{
         let ground = map.createLayer("Tile Layer 1",[terrain],0,0)
         let river = map.createLayer("Tile Layer 2", [terrain],0,0)
         this.physics.world.setBounds(0,0,map.widthInPixels,map.heightInPixels)
-        
-        let keyboard = this.input.keyboard.createCursorKeys()
+        let keyboard = this.input.keyboard
         this.mage = new Player(this,map.width,map.height,"Mage",keyboard,0)
         this.cameras.main.setSize(800,600);
         this.cameras.main.startFollow(this.mage)
@@ -31,6 +30,5 @@ export class PlayScene extends Phaser.Scene{
     }
     update(time:number,delta:number){
       this.mage.update()
-
     }
 }      

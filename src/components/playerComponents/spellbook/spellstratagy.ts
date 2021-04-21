@@ -8,7 +8,7 @@ export default class SpellStratagy{
     setSpell(spell:Spell){
         this.spell = spell
     }
-    Cast(){
-        this.spell.Cast()
+    Cast(playerX:number,playerY:number){
+        return this.spell.Cast(playerX,playerY)
     }
 }

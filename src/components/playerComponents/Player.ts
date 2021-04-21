@@ -1,10 +1,14 @@
 import SpellBook from "./spellbook/spellbook";
+import SpellManager from "./spellbook/SpellManager";
+import BasicSpell from "./spells/basicspell";
+import Spell from "./spells/spell";
 
 export class Player extends Phaser.Physics.Arcade.Sprite{
-    keyboard: Phaser.Types.Input.Keyboard.CursorKeys;
-    spellbook:SpellBook
+    keyboard: Phaser.Input.Keyboard.KeyboardPlugin
+    spellManager:SpellManager;
+    currentSpell: number
     constructor(scene:Phaser.Scene, x:number,y:number, textrue:string,
-        keyboard:Phaser.Types.Input.Keyboard.CursorKeys,frame?:string | number){
+        keyboard:Phaser.Input.Keyboard.KeyboardPlugin,frame?:string | number){
         super(scene,x,y,textrue,frame);
         scene.add.existing(this)
         scene.sys.updateList.add(this);
@@ -15,7 +19,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         this.setCollideWorldBounds(true)
         this.setSize(35,32).setOffset(15,30)
         this.keyboard = keyboard;
-        this.spellbook = new SpellBook();
+
+        this.spellManager = new SpellManager(this.scene);
+        this.keyboard.addKeys('W,A,S,D,ONE,TWO,THREE');
+        this.currentSpell = 0
 
         this.preload()
     }
@@ -74,35 +81,55 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         this.scene.input.on('pointerdown',(pointer:any) =>{
             this.Casting()
         },this.scene)
-        
+        this.setActive(true)
     }
 
     update(){
         this.Movement()
+        this.ChangeSpell()
+        this.spellManager.update()
+    }
+    ChangeSpell(){
+        this.keyboard.on('keydown-ONE',()=>{
+            this.currentSpell = 0
+        })
+        this.keyboard.on('keydown-TWO',()=>{
+            this.currentSpell = 1
+        })
+        this.keyboard.on('keydown-THREE',()=>{
+            this.currentSpell = 2
+        })
     }
     Casting(){
-      this.spellbook.CastCurrentSpell()
+        this.spellManager.CreateNewSlell(this.currentSpell,this.body.x,this.body.y)
     }
     Movement() {
-        if(this.keyboard.right.isDown === true){
-            this.setVelocityX(250)
-        }
-        if(this.keyboard.left.isDown === true){
-            this.setVelocityX(-250)
-        }
-        if(this.keyboard.up.isDown === true){
-            this.setVelocityY(-250)
-        }
-        if(this.keyboard.down.isDown === true){
-            this.setVelocityY(250)
-        }
-        if(this.keyboard.right.isUp && this.keyboard.left.isUp){
-            this.setVelocityX(0)
-        }
-        if(this.keyboard.up.isUp && this.keyboard.down.isUp){
-            this.setVelocityY(0)
 
-        }
+        this.keyboard.on('keydown-D',()=>{
+            this.setVelocityX(250)
+        },this)
+        this.keyboard.on('keyup-D',()=>{
+            this.setVelocityX(0)
+        },this)
+        this.keyboard.on('keydown-A',() =>{
+            this.setVelocityX(-250)
+        },this)
+        this.keyboard.on('keyup-A',()=>{
+            this.setVelocityX(0)
+        },this)
+        this.keyboard.on('keydown-W',() =>{
+            this.setVelocityY(-250)
+        })
+        this.keyboard.on('keyup-W',()=>{
+            this.setVelocityY(0)
+        },this)
+        this.keyboard.on('keydown-S',()=>{
+            this.setVelocityY(250)
+        })
+        this.keyboard.on('keyup-S',()=>{
+            this.setVelocityY(0)
+        },this)
+
         this.body.velocity.normalize().scale(100)
         if(this.body.velocity.x > 0 || this.body.velocity.x < 0 ||
                 this.body.velocity.y > 0 || this.body.velocity.y < 0)
@@ -122,5 +149,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         }else{
             this.play("idle",true)
         }
+        
     }
 }
+
+
