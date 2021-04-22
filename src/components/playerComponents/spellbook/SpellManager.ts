@@ -11,11 +11,11 @@ export default class SpellManager{
         this.scene = scene
 
     }
-    CreateNewSlell(index:number,x:number,y:number){
+    CreateNewSlell(index:number,x:number,y:number,direction:number){
         console.log("Create NEw Spell")
         let newSpell:any
         if(index === 0){
-            newSpell =  new BasicSpell(this.scene,'Basic',x,y)
+            newSpell =  new BasicSpell(this.scene,'fireBall',x,y,direction)
         }
         this.spells.push(newSpell)
         
