@@ -22,14 +22,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         this.setSize(35,32).setOffset(15,30)
         this.keyboard = keyboard;
         this.direction = 0
-        this.spellManager = new SpellManager(this.scene);
+        this.spellManager = new SpellManager(this.scene.physics.world,this.scene);
         this.keyboard.addKeys('W,A,S,D,ONE,TWO,THREE');
         this.currentSpell = 0
 
         this.preload()
     }
     preload(){
-        console.log("Preload")
         this.create()
     }
     create(){
@@ -172,7 +171,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         this.spellManager.CreateNewSlell(this.currentSpell,this.body.x + this.body.width / 2,this.body.y + this.body.height / 2,this.direction)
     }
     Movement() {
-
         this.body.velocity.normalize().scale(100)
         if(this.body.velocity.x > 0 || this.body.velocity.x < 0 ||
                 this.body.velocity.y > 0 || this.body.velocity.y < 0)
@@ -192,6 +190,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         }
         
     }
+    
 }
 
 

@@ -1,12 +1,14 @@
+import { NONE } from "phaser";
 import { Player } from "../Player";
 import BasicSpell from "../spells/basicspell";
 import Spell from "../spells/spell";
 
-export default class SpellManager{
+export default class SpellManager extends Phaser.Physics.Arcade.Group{
     spells: Spell[]
     scene: Phaser.Scene
 
-    constructor(scene:Phaser.Scene){
+    constructor(world:Phaser.Physics.Arcade.World,scene:Phaser.Scene){
+        super(world,scene)
         this.spells = []
         this.scene = scene
 
@@ -15,7 +17,10 @@ export default class SpellManager{
         console.log("Create NEw Spell")
         let newSpell:any
         if(index === 0){
-            newSpell =  new BasicSpell(this.scene,'fireBall',x,y,direction)
+            // newSpell =  new BasicSpell(this.scene,'fireBall',x,y,direction)
+            this.create(
+
+            )
         }
         this.spells.push(newSpell)
         
@@ -23,12 +28,14 @@ export default class SpellManager{
     Remove(){
 
     }
-    MoveSpell(spell:Spell){
-        spell.Move()
-    }
+
     update(){
         this.spells.forEach(spell=>{
-            this.MoveSpell(spell)
+            if(spell.active == false){
+
+            }else{
+                spell.update()
+            }
         })
     }
 }

@@ -1,11 +1,5 @@
-export default class Spell{
-    name:string
-    scene: Phaser.Scene
-    sprite: Phaser.Physics.Arcade.Sprite
-    angle:number
+export default abstract class Spell{
     readonly SPEED = 100
-    hitboxX:number
-    hitboxY:number
     readonly DIRECTIONS:{[index:number]:[x:number,y:number]} = {
         0:[0,-1],
         1:[1,0],
@@ -16,7 +10,15 @@ export default class Spell{
         1:180,
         3:0
     }
+
+    name:string
+    scene:Phaser.Scene
+    sprite:Phaser.Physics.Arcade.Sprite
+    angle:number
+    hitboxX:number
+    hitboxY:number
     myDirection:number
+    active:boolean
     constructor(scene:Phaser.Scene,name:string,playerX:number, playerY:number,direction:number){
         this.name = name
         this.scene = scene
@@ -30,21 +32,20 @@ export default class Spell{
             this.hitboxY = 70
         }else{
             this.angle = this.BOXVALUE[this.myDirection]
-            console.log(this.angle)
             this.hitboxX = 70
             this.hitboxY = 10
         }
-
+        this.active = true
         this.sprite.setSize(this.hitboxX,this.hitboxY)
         this.sprite.setAngle(this.angle)
-
-    }
-    Move(){
         let xSpeed = this.SPEED * this.DIRECTIONS[this.myDirection][0]
         let ySpeed = this.SPEED * this.DIRECTIONS[this.myDirection][1]
         this.sprite.setVelocityX(xSpeed)
         this.sprite.setVelocityY(ySpeed)
-
-
+    }
+   
+    abstract Behavior() : any
+    update(){
+        this.Behavior()
     }
 }
