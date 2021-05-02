@@ -1,4 +1,4 @@
-export default abstract class Spell{
+export default abstract class Spell extends Phaser.Physics.Arcade.Sprite{
     readonly SPEED = 100
     readonly DIRECTIONS:{[index:number]:[x:number,y:number]} = {
         0:[0,-1],
@@ -13,18 +13,24 @@ export default abstract class Spell{
 
     name:string
     scene:Phaser.Scene
-    sprite:Phaser.Physics.Arcade.Sprite
     angle:number
     hitboxX:number
     hitboxY:number
     myDirection:number
-    active:boolean
+    playerX:number
+    playerY:number
     constructor(scene:Phaser.Scene,name:string,playerX:number, playerY:number,direction:number){
+        super(scene,playerX,playerY,name)
         this.name = name
         this.scene = scene
-        this.sprite = this.scene.physics.add.sprite(playerX,playerY,this.name)
+        scene.add.existing(this)
+        scene.sys.updateList.add(this);
+        scene.sys.displayList.add(this);
+        scene.physics.add.existing(this)
+        scene.physics.world.enableBody(this)
+        this.playerX = playerX
+        this.playerY = playerY
         this.myDirection = direction
-        this.sprite.play(name)
 
         if(this.myDirection % 2 === 0){
             this.angle = -90 * this.DIRECTIONS[this.myDirection][1]
@@ -35,17 +41,23 @@ export default abstract class Spell{
             this.hitboxX = 70
             this.hitboxY = 10
         }
-        this.active = true
-        this.sprite.setSize(this.hitboxX,this.hitboxY)
-        this.sprite.setAngle(this.angle)
+        this.setSize(this.hitboxX,this.hitboxY)
+        this.setAngle(this.angle)
         let xSpeed = this.SPEED * this.DIRECTIONS[this.myDirection][0]
         let ySpeed = this.SPEED * this.DIRECTIONS[this.myDirection][1]
-        this.sprite.setVelocityX(xSpeed)
-        this.sprite.setVelocityY(ySpeed)
+        this.setVelocityX(xSpeed)
+        this.setVelocityY(ySpeed)
+        this.play(name)
+
     }
-   
+    preUpdate(time:number,delta:number){
+        super.preUpdate(time,delta);
+        console.log("preUpdate")
+    }
     abstract Behavior() : any
-    update(){
-        this.Behavior()
+    update(time:number,delta:number){
+        super.update(time,delta);
+        console.log("update")
+
     }
 }

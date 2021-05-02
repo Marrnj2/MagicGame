@@ -1,7 +1,4 @@
-import SpellBook from "./spellbook/spellbook";
 import SpellManager from "./spellbook/SpellManager";
-import BasicSpell from "./spells/basicspell";
-import Spell from "./spells/spell";
 
 export class Player extends Phaser.Physics.Arcade.Sprite{
   
@@ -10,8 +7,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
     currentSpell: number
     direction:number
     constructor(scene:Phaser.Scene, x:number,y:number, textrue:string,
-        keyboard:Phaser.Input.Keyboard.KeyboardPlugin,frame?:string | number){
-        super(scene,x,y,textrue,frame);
+        keyboard:Phaser.Input.Keyboard.KeyboardPlugin){
+        super(scene,x,y,textrue);
         scene.add.existing(this)
         scene.sys.updateList.add(this);
         scene.sys.displayList.add(this);
@@ -22,10 +19,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         this.setSize(35,32).setOffset(15,30)
         this.keyboard = keyboard;
         this.direction = 0
-        this.spellManager = new SpellManager(this.scene.physics.world,this.scene);
+        this.spellManager = new SpellManager(this.scene);
         this.keyboard.addKeys('W,A,S,D,ONE,TWO,THREE');
-        this.currentSpell = 0
-
+        this.currentSpell = 0;
         this.preload()
     }
     preload(){

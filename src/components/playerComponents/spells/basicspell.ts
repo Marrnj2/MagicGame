@@ -11,6 +11,10 @@ export default class BasicSpell extends Spell{
     }
 
     Behavior(){
-     
+        if (Phaser.Math.Distance.Between(this.x,this.y,this.playerX,this.playerY) > 100)
+        {
+            this.setActive(false)
+            this.setVisible(false)
+        }
     }
 }
