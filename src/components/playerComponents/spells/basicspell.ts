@@ -2,12 +2,21 @@ import Spell from "./spell"
 
 export default class BasicSpell extends Spell{
     readonly TRAVELDISTANCE = 10
-    playerX:number
-    playerY:number
-    constructor(scene:Phaser.Scene,name:string,playerX:number,playerY:number,direction:number){
-        super(scene,name,playerX,playerY,direction)
-        this.playerX = playerX
-        this.playerY = playerY
+
+    constructor(scene:Phaser.Scene,playerX:number,playerY:number,name:string,direction:number){
+        super(scene,playerX,playerY,name,direction)
+
+        if(this.myDirection % 2 === 0){
+            this.angle = -90 * this.DIRECTIONS[this.myDirection][1]
+            this.hitboxX = 10
+            this.hitboxY = 70
+        }else{
+            this.angle = this.BOXVALUE[this.myDirection]
+            this.hitboxX = 70
+            this.hitboxY = 10
+        }
+        this.setSize(this.hitboxX,this.hitboxY)
+        this.setAngle(this.angle)
     }
 
     Behavior(){

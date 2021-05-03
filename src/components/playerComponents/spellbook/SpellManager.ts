@@ -9,7 +9,7 @@ export default class SpellManager extends Phaser.Physics.Arcade.Group{
 
     }
     CreateNewSlell(index:number,x:number,y:number,direction:number){
-        let spell = new BasicSpell(this.scene,"fireBall",x,y,direction)
+        let spell = new BasicSpell(this.scene,x,y,"fireBall",direction)
         this.add(spell)
     }
     Remove(){
