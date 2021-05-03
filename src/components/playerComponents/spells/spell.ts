@@ -12,9 +12,7 @@ export default abstract class Spell extends Phaser.Physics.Arcade.Sprite{
     }
     name:string
     scene:Phaser.Scene
-    angle:number
-    hitboxX:number
-    hitboxY:number
+
     myDirection:number
     playerX:number
     playerY:number
@@ -31,7 +29,6 @@ export default abstract class Spell extends Phaser.Physics.Arcade.Sprite{
         scene.physics.add.existing(this)
         this.addToUpdateList()
         this.addToDisplayList()
-
         this.xSpeed = this.SPEED * this.DIRECTIONS[this.myDirection][0]
         this.ySpeed = this.SPEED * this.DIRECTIONS[this.myDirection][1]
         this.setVelocity(100,0)

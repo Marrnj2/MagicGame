@@ -2,7 +2,9 @@ import Spell from "./spell"
 
 export default class BasicSpell extends Spell{
     readonly TRAVELDISTANCE = 10
-
+    angle:number
+    hitboxX:number
+    hitboxY:number
     constructor(scene:Phaser.Scene,playerX:number,playerY:number,name:string,direction:number){
         super(scene,playerX,playerY,name,direction)
 
