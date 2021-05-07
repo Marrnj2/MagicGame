@@ -22,12 +22,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         this.spellManager = new SpellManager(this.scene);
         this.keyboard.addKeys('W,A,S,D,ONE,TWO,THREE');
         this.currentSpell = 0;
-        this.preload()
-    }
-    preload(){
         this.create()
     }
+    preload(){
+    }
     create(){
+        
         this.anims.create({
             key:"up",
             frameRate:7,
@@ -185,6 +185,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
             }
         }
         
+    }
+    GetBody(){
+        return this.body
     }
     
 }
