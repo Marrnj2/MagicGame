@@ -2,6 +2,7 @@ import {CST} from"../CST"
 import { Player } from "../components/playerComponents/Player";
 import Walker from "../components/NPC/walker"
 import MapGenerator from "../MapGenerator"
+import BSP from "../BSP";
 export class PlayScene extends Phaser.Scene{
     mage!:Player
     testEnemy!:Walker
@@ -16,6 +17,8 @@ export class PlayScene extends Phaser.Scene{
         this.load.tilemapTiledJSON("map","./assets/map.json")
     }
     create(){
+        let bsp = new BSP();
+        bsp.BSPController();
         let mapMaker = new MapGenerator();
         let newLevel = mapMaker.General()
         // When loading from an array, make sure to specify the tileWidth and tileHeight

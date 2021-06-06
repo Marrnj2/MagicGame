@@ -15,40 +15,30 @@ export default class MapGenerator{
     readonly FLOORTILE = 510
     readonly VOIDTILE = 1140
     readonly WALLTILE = 200
-    
-    roomRef:any
-    constructor(){
+    General(world:number[],lWidth:number,lHeight:number){
 
-    }
-    General(){
-        let roomCount = 4
-        let lWidth = 60;
-        let lHeight = 60;
-        let maxRHeight = 30
-        let minRHeight = 12
-        let maxRWidth = 30
-        let minRWidth = 12
-        let world = this.CreateWorld(lWidth,lHeight)
+        let maxRHeight = lHeight
+        let minRHeight = lHeight / 3
+        let maxRWidth = lWidth
+        let minRWidth = lWidth / 3
 
-        for(let i = 0; i < roomCount; i++){
-            let rWidth:number
-            let rHeight:number
-            let room: [number[]]
-            let newArray: number[]
-            let roomPos:number
-            let maxPosition:number
-            do{
-                rWidth = Math.floor(Math.random() * (maxRWidth - minRWidth) + minRWidth)
-                rHeight = Math.floor(Math.random() * (maxRHeight - minRHeight) + minRHeight)
-                room = this.CreateRoom(rWidth,rHeight);
-                maxPosition = (lWidth*lHeight) - (rWidth*rHeight);
-                roomPos = Math.floor(Math.random()*(maxPosition - 1));
-            }
-            while (!this.CheckBoundry(roomPos,rWidth,rHeight,lWidth,lHeight) || !this.CheckIntersect(roomPos,rWidth,rHeight,world,lWidth,lHeight))
-            newArray = this.ConcatArray(room)
-            world = this.InsertRoom(rHeight,rWidth,roomPos,lWidth,world,newArray)
-            world = this.InsertWall(roomPos,rWidth,rHeight,world,lWidth,lHeight)
+        let rWidth:number
+        let rHeight:number
+        let room: [number[]]
+        let newArray: number[]
+        let roomPos:number
+        let maxPosition:number
+        do{
+            rWidth = Math.floor(Math.random() * (maxRWidth - minRWidth) + minRWidth)
+            rHeight = Math.floor(Math.random() * (maxRHeight - minRHeight) + minRHeight)
+            room = this.CreateRoom(rWidth,rHeight);
+            maxPosition = (lWidth*lHeight) - (rWidth*rHeight);
+            roomPos = Math.floor(Math.random()*(maxPosition - 1));
         }
+        while (!this.CheckBoundry(roomPos,rWidth,rHeight,lWidth,lHeight))
+        newArray = this.ConcatArray(room)
+        world = this.InsertRoom(rHeight,rWidth,roomPos,lWidth,world,newArray)
+        world = this.InsertWall(roomPos,rWidth,rHeight,world,lWidth,lHeight)
         let convertedWorld: any = [];
         while(world.length){
             convertedWorld.push(world.splice(0,lWidth))
@@ -100,16 +90,7 @@ export default class MapGenerator{
         }
         return newArray
     }
-    // Rturns the world as an array
-    CreateWorld(width:number,height:number){
-        var level:number[] = [];
-        for(let i = 0; i < width; i++){
-            for(let j = 0; j < height; j++){
-                level.push(1140)
-            }
-        }   
-        return level
-    }
+
     CreateRoom(width:number,height:number){
         var room:[number[]] = [[]];
         for(let i=0;i<width;i++){
