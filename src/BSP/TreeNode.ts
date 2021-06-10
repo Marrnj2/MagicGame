@@ -1,9 +1,11 @@
+import { Container } from "./Container";
+
 class TreeNode{
-    data: any;
+    container: Container;
     left?:TreeNode
     right?:TreeNode
-    constructor(data:any){
-        this.data = data
+    constructor(container:Container){
+        this.container = container
         this.left = this.right = undefined
     }
 }

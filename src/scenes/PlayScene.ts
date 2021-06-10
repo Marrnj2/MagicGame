@@ -18,11 +18,11 @@ export class PlayScene extends Phaser.Scene{
     }
     create(){
         let bsp = new BSP();
-        bsp.BSPController();
+        let w = bsp.BSPController();
         let mapMaker = new MapGenerator();
         let newLevel = mapMaker.General()
         // When loading from an array, make sure to specify the tileWidth and tileHeight
-        var map = this.make.tilemap({ data: newLevel, tileWidth: 16, tileHeight: 16 });
+        var map = this.make.tilemap({ data: w, tileWidth: 16, tileHeight: 16 });
         var tiles = map.addTilesetImage('terrain');
         var layer = map.createLayer(0, tiles, 0, 0);
         // let map = this.add.tilemap("map");
