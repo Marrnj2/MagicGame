@@ -11,7 +11,6 @@ export class BinaryTree{
       
         let traverse = (node:TreeNode) => {
           if(node.left == undefined && node.right == undefined){
-              console.log(node.container)
               rooms.push(node.container)
           }
           if (node.left) traverse(node.left);

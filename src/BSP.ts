@@ -8,15 +8,22 @@ import {BinaryTree} from "./BSP/BinaryTree"
 import { Container } from "./BSP/Container"
 import { TreeNode } from "./BSP/TreeNode"
 export default class BSP{
+    readonly GROUND = 300
+    readonly WALL = 510
     readonly minSize = 6
+    readonly HEIGHT = 80
+    readonly WIDTH = 80
     width:number = 50
     height:number = 50
     roomCount:number
+    world:any
+    leafs:any[]
     constructor(){
-        this.width = 80
-        this.height = 80
+        this.width = this.WIDTH
+        this.height = this.HEIGHT
         this.roomCount = 0
- 
+        this.world = 0
+        this.leafs = []
     }
     BSPController(){
         let rootContainer = new Container(0,0,this.width,this.height)
@@ -24,41 +31,62 @@ export default class BSP{
         let root = this.SplitDirection(rootContainer,3)
         let tree = new BinaryTree(root)
         tree.preOrder(rooms)
-        let world:any  = this.CreateWorld(this.width,this.height)
-        console.log(world)
+        this.world = this.CreateWorld(this.width,this.height)
         rooms.forEach(room =>{
-            // for(let i = 0; i < rHeight; i ++){
-            //     for(let j = 0; j < rWidth;j++){
-            //         let index = roomPos + (lWidth * i)+ j
-            //         gameWorld[index] = newArray[(rWidth * i)+ j]
-            //     }
-            // }510
             let roomPos = (room.y * this.width) + room.x
-            console.log(roomPos)
-            // for(let x = room.x; x < room.x + room.w; x ++){
-            //     world[roomPos + x] = 510
-            //     // world[(roomPos + x) + (this.width * (room.h - 1))] = 510
-            //     // for(let y = room.y; y < room.y + room.h;y++){
-            //     //     let index = roomPos + (this.width * y)
-            //     //     world[index] = 510
-            //     //     world[index + room.w - 1] = 510
-            //     // }
-            // }
             for(let i = 0; i < room.w; i++){
-                world[roomPos + i] = 510
-                world[(roomPos + i) + (this.width * (room.h - 1))] = 510
+                this.world[roomPos + i] = this.GROUND
+                this.world[(roomPos + i) + (this.width * (room.h - 1))] = this.GROUND
                 for(let j = 0; j < room.h; j++){
                     let index = roomPos + (this.width * j)
-                    world[index] = 510
-                    world[index + room.w - 1] = 510
+                    this.world[index] = this.GROUND
+                    this.world[index + room.w - 1] = this.GROUND
                 }
             }
         })
+        this.leafs = rooms
+        this.PostOrderTraversal(tree.root)
         let cWorld:any = []
-        while(world.length){
-            cWorld.push(world.splice(0,this.width))
+        while(this.world.length){
+            cWorld.push(this.world.splice(0,this.width))
         }
         return cWorld
+    }
+
+    PostOrderTraversal(node:TreeNode){
+        if(node != undefined){
+            this.PostOrderTraversal(node.left)
+            this.PostOrderTraversal(node.right)
+            if(node.left != undefined && node.right != undefined){
+                this.ConnectContainers(node.left,node.right)
+            }
+        }
+    }
+    ConnectContainers(nodeLeft:TreeNode,nodeRight:TreeNode){
+        if (nodeLeft.container.center.x < nodeRight.container.center.x){
+            for(let x = nodeLeft?.container.center.x; x <= nodeRight.container.center.x; x++){
+                let xPos =  nodeLeft.container.center.y * this.width + x
+                let xPosPad =  (nodeLeft.container.center.y + 1) * this.width + x
+                this.world[xPos] = this.WALL
+                this.world[xPosPad] = this.WALL
+
+            }
+        }
+        if(nodeLeft.container.center.y < nodeRight.container.center.y){
+            for(let y = nodeLeft?.container.center.y; y <= nodeRight.container.center.y; y++){
+                let yPos =  y * this.width + nodeLeft.container.center.x
+                let yPosPad =  y * this.width + nodeLeft.container.center.x + 1
+
+                this.world[yPos] = this.WALL
+                this.world[yPosPad] = this.WALL
+
+            }
+        }
+    }
+    GetXY(x:number,y:number){
+        let xPos =  y * this.width + x
+
+        return xPos
     }
     SplitDirection(container:Container,iterations:number){
         let node = new TreeNode(container)
@@ -81,32 +109,14 @@ export default class BSP{
         return node
     }
     WorldCopyX(container:Container){
-        console.log("Split X")
-        console.log("CW",container.w)
         let min = Math.floor(container.w * 0.40);
         let max = Math.floor(container.w * 0.70); 
-
-        console.log("min",min)
-        console.log("max",max)
-
         let splitOn:number = Math.floor(Math.random() * (max - min) + min);
         let remainder = (container.w - splitOn)
-        // for(let i = 0; i < node.container.length; i += tilesToSkip){
-    
-        //     a = node.container.slice(i,(i + splitOn))
-        //     b = node.container.slice(i + splitOn,(i+ splitOn + tilesToSkip))
-        // }
-        console.log("Rem",remainder)
-        console.log("Split",splitOn)
-    
         let containerL = new Container(container.x,container.y,container.w - remainder, container.h)
         let containerR = new Container(container.x + splitOn,container.y,container.w  - splitOn, container.h)
-        console.log("L",containerL)
-        console.log("R",containerR)
         if(containerL.w < this.minSize || containerR.w < this.minSize){
-            console.log("Invalid")
             return this.WorldCopyX(container)
-        
         }else{
             return [containerL,containerR]
         }
@@ -114,33 +124,17 @@ export default class BSP{
 
     }
     WorldCopyY(container:Container){
-        console.log("Split Y")
-        console.log("CH",container.h)
         let min = Math.floor(container.h * 0.30);
         let max = Math.floor(container.h * 0.70); 
-        console.log("min",min)
-        console.log("max",max)
-
         let splitOn:number = Math.floor(Math.random() * (max - min) + min);
         let remainder = (container.h - splitOn)
-   
-        // for(let i = 0; i < node.container.length; i += tilesToSkip){
-    
-        //     a = node.data.slice(i,(i + splitOn))
-        //     b = node.data.slice(i + splitOn,(i+ splitOn + tilesToSkip))
-
-        // }
         let containerL = new Container(container.x,container.y,container.w,  container.h - remainder)
         let containerR = new Container(container.x,container.y + splitOn ,container.w , container.h - splitOn )
-        console.log("L",containerL)
-        console.log("R",containerR)
         if(containerL.h < this.minSize || containerR.h < this.minSize){
-            console.log("Invalid")
             return this.WorldCopyY(container)
         }else{
             return [containerL,containerR]
         }
-   
     }
   
 
@@ -148,7 +142,7 @@ export default class BSP{
         var level:number[] = [];
         for(let i = 0; i < width; i++){
             for(let j = 0; j < height; j++){
-                level.push(1140)
+                level.push(this.GROUND)
             }
         }   
         return level

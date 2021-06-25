@@ -46,6 +46,20 @@ export default abstract class Spell extends Phaser.Physics.Arcade.Sprite{
         this.setVisible(true)
         this.setVelocityX(this.xSpeed)
         this.setVelocityY(this.ySpeed)
+        switch(direction){
+            case 3:
+                this.setRotation(0)
+                break;
+            case 0:
+                this.setRotation(1.5708)
+                break;
+            case 1:
+                this.setRotation(3.14159)
+                break;
+            case 2:
+                this.setRotation(4.71239)
+                break;
+        }
     }
     abstract Behavior() : any
 }

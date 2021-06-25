@@ -6,6 +6,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
     spellManager:SpellManager;
     currentSpell: number
     direction:number
+    health:number
     constructor(scene:Phaser.Scene, x:number,y:number, textrue:string,
         keyboard:Phaser.Input.Keyboard.KeyboardPlugin){
         super(scene,x,y,textrue);
@@ -19,6 +20,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         this.setScale(.7)
         this.setSize(35,32).setOffset(15,30)
         this.keyboard = keyboard;
+        this.health = 100
         this.direction = 0
         this.spellManager = new SpellManager(this.scene);
         this.keyboard.addKeys('W,A,S,D,ONE,TWO,THREE');
@@ -109,12 +111,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
 
         this.keyboard.on('keydown-ONE',()=>{
             this.currentSpell = 0
+            console.log("spell 1")
+
         })
         this.keyboard.on('keydown-TWO',()=>{
             this.currentSpell = 1
+            console.log("spell 2")
+
         })
         this.keyboard.on('keydown-THREE',()=>{
             this.currentSpell = 2
+            console.log("spell 3")
         })
         this.keyboard.on('keydown-W',() =>{
             this.setVelocityY(-250)
@@ -155,35 +162,52 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
 
         },this)
     }
-
     update(){
         this.Movement()
         this.ChangeSpell()
         this.spellManager.update()
+        if(this.health == 0){
+            this.scene.scene.restart()
+        }
     }
     ChangeSpell(){
        
     }
     Casting(){
-        this.spellManager.CreateNewSlell(this.currentSpell,this.body.x + this.body.width / 2,this.body.y + this.body.height / 2,this.direction)
+        this.spellManager.CreateNewSpell(this.currentSpell,this.body.x + this.body.width / 2,this.body.y + this.body.height / 2,this.direction)
     }
     Movement() {
         this.body.velocity.normalize().scale(100)
         if(this.body.velocity.x > 0 || this.body.velocity.x < 0 ||
                 this.body.velocity.y > 0 || this.body.velocity.y < 0)
         {
-            if(this.body.velocity.x > 0){
-                this.play("right",true);
+            if(this.body.velocity.x > 0)
+            {
+                if(this.body.velocity.y > 0)
+                    this.play("down",true)
+                else
+                    this.play("right",true)
             }
             else if(this.body.velocity.x < 0){
-                this.play("left",true);
+                if(this.body.velocity.y > 0)
+                    this.play("down",true)
+                else
+                    this.play("left",true)
             }
-            if(this.body.velocity.y < 0){
+            else{
+                if(this.body.velocity.y > 0)
+                    this.play("down",true)
+                else if(this.body.velocity.y < 0)
+                    this.play("up",true)
+            }
+            
+          /*  if(this.body.velocity.y < 0){
+                console.log("sad")                
                 this.play("up",true);
             }
             else if(this.body.velocity.y > 0){
                 this.play("down",true)
-            }
+            }*/
         }
         
     }

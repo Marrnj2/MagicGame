@@ -25,5 +25,8 @@ export default class Walker extends Phaser.Physics.Arcade.Sprite{
         }else{
             this.scene.physics.moveToObject(this,playerBody,0)
         }
+        if(Phaser.Math.Distance.BetweenPoints(this.body,playerBody) < 25){
+            this.player.health -= 1
+        }
     }
 }

@@ -21,10 +21,25 @@ export class LoadScene extends Phaser.Scene{
             frameWidth:68,
             frameHeight:9
         })
+        this.load.spritesheet("EarthBall","./assets/EarthBall.png",{
+            frameWidth:48,
+            frameHeight:48
+        })
+        this.load.image("IceBall","./assets/IceBall.png")
+        
     }
     create(){
         this.anims.create({
-            key:"fireBall",
+            key:"EarthBall",
+            frameRate:10,
+            frames:this.anims.generateFrameNames("EarthBall",{
+                start:0,
+                end:12
+            }),
+            repeat: -1
+        });
+        this.anims.create({
+            key:"FireBall",
             frameRate:10,
             frames:this.anims.generateFrameNames("FireBall",{
                 start:0,

@@ -10,7 +10,7 @@ class Container{
         this.y = y
         this.w = w
         this.h = h
-        this.center = new Point(this.x + (this.w/2),this.y + (this.h/2))
+        this.center = new Point(Math.floor(this.x + (this.w/2)),Math.floor(this.y + (this.h/2)))
     }
 }
 
