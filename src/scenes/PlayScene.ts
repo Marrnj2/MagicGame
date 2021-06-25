@@ -1,8 +1,16 @@
 import {CST} from"../CST"
-import { Player } from "./Player";
+import { Player } from "../components/playerComponents/Player";
+import Walker from "../components/NPC/walker"
+import MapGenerator from "../MapGenerator"
+import BSP from "../BSP";
+import Exit from "../components/exit/exit";
 export class PlayScene extends Phaser.Scene{
-    mage!:Phaser.Physics.Arcade.Sprite
-    keyboard!: {[index:string] : Phaser.Input.Keyboard.Key};
+    readonly WALL = 510
+    readonly tileSize = 16
+    mage!:Player
+    testEnemy!:Walker
+    exit!:Exit
+    healthText!:any
     constructor(){
         super({
             key:CST.SCENES.PLAY
@@ -10,107 +18,42 @@ export class PlayScene extends Phaser.Scene{
     }
 
     preload(){
-        this.anims.create({
-            key:"left",
-            frameRate:7,
-            frames:this.anims.generateFrameNames("Mage",{
-                start:10,
-                end:17
-            }),
-            repeat: -1
-        });
-        this.anims.create({
-            key:"right",
-            frameRate:7,
-            frames:this.anims.generateFrameNames("Mage",{
-                start:27,
-                end:37
-            }),
-            repeat: -1
-        });
-        this.anims.create({
-            key:"up",
-            frameRate:7,
-            frames:this.anims.generateFrameNames("Mage",{
-                start:1,
-                end:8
-            }),
-            repeat: -1
-            
-        });
-        this.anims.create({
-            key:"down",
-            frameRate:7,
-            frames:this.anims.generateFrameNames("Mage",{
-                start:19,
-                end:26
-            }),
-            repeat: -1
-        });
-        this.anims.create({
-            key:"idle",
-            frameRate:1,
-            frames:this.anims.generateFrameNames("Mage",{
-                start:26,
-                end:26
-            }),
-            repeat: -1
-        });
         this.load.image("terrain","./assets/terrain.png")
         this.load.tilemapTiledJSON("map","./assets/map.json")
     }
     create(){
-        let map = this.add.tilemap("map");
+        let bsp = new BSP();
+        let world = bsp.BSPController();
+
+        var map = this.make.tilemap({ data: world, tileWidth: this.tileSize, tileHeight: this.tileSize });
+        var tiles = map.addTilesetImage('terrain');
+        var layer = map.createLayer(0, tiles, 0, 0);
+        layer.setCollision(this.WALL,true);
         let terrain = map.addTilesetImage("terrain","terrain");
-        let ground = map.createLayer("Tile Layer 1",[terrain],0,0)
-        let river = map.createLayer("Tile Layer 2", [terrain],0,0)
         this.physics.world.setBounds(0,0,map.widthInPixels,map.heightInPixels)
-        this.mage = new Player(this,map.width,map.height,"Mage","String",0)
-        this.mage.setCollideWorldBounds(true)
-        this.mage.setSize(45,52).setOffset(10,10)
-        this.keyboard = this.input.keyboard.addKeys("W, A, S, D")
+        let keyboard = this.input.keyboard
+        this.mage = new Player(this,map.width,map.height,"Mage",keyboard)
         this.cameras.main.setSize(800,600);
         this.cameras.main.startFollow(this.mage)
+        this.cameras.main.setBounds(0,0,80 * this.tileSize,this.tileSize * 80)
+        this.physics.add.collider(this.mage,layer)
+        let rooms = bsp.leafs
+        let exitRoom =  Math.floor((Math.random() * rooms.length) + 0)
+        console.log(rooms[exitRoom])
+        console.log(rooms[exitRoom]["center"].x,rooms[exitRoom]["center"].y)
+        let xPos = rooms[exitRoom]["center"].x * this.tileSize
+        let yPos = rooms[exitRoom]["center"].y * this.tileSize
+        this.exit = new Exit(this,xPos,yPos,"Mage",this.mage)
+        this.healthText = this.add.text(16, 16, `Health: ${this.mage.health}`, { fontSize: '32px' ,color:"#ffffff"});
+        this.healthText.setScrollFactor(0)
+        this.testEnemy = new Walker(this,150,150,"enemy",this.mage)
+        this.physics.add.collider(this.testEnemy,layer)
+
     }
     update(time:number,delta:number){
-        if(this.keyboard.D.isDown === true){
-            this.mage.setVelocityX(100)
-        }
-        if(this.keyboard.A.isDown === true){
-            this.mage.setVelocityX(-100)
-        }
-        if(this.keyboard.W.isDown === true){
-            this.mage.setVelocityY(-100)
-        }
-        if(this.keyboard.S.isDown === true){
-            this.mage.setVelocityY(100)
-        }
-        if(this.keyboard.A.isUp && this.keyboard.D.isUp){
-            this.mage.setVelocityX(0)
-        }
-        if(this.keyboard.W.isUp && this.keyboard.S.isUp){
-            this.mage.setVelocityY(0)
-
-        }
-        this.mage.body.velocity.normalize().scale(100)
-        if(this.mage.body.velocity.x > 0 || this.mage.body.velocity.x < 0 ||
-             this.mage.body.velocity.y > 0 || this.mage.body.velocity.y < 0)
-        {
-            if(this.mage.body.velocity.x > 0){
-                this.mage.play("right",true);
-            }
-            else if(this.mage.body.velocity.x < 0){
-                this.mage.play("left",true);
-            }
-            if(this.mage.body.velocity.y < 0){
-                this.mage.play("up",true);
-            }
-            else if(this.mage.body.velocity.y > 0){
-                this.mage.play("down",true)
-            }
-        }else{
-            this.mage.play("idle",true)
-        }
-
+      this.mage.update()
+      this.testEnemy.update()
+      this.exit.update()
+        this.healthText.setText(`Health: ${this.mage.health}`)
     }
 }      
