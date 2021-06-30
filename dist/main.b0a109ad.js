@@ -391,26 +391,14 @@ function (_super) {
     var _this = _super.call(this, scene, playerX, playerY, textureKey) || this;
 
     _this.SPEED = 200;
-    _this.DIRECTIONS = {
-      0: [0, -1],
-      1: [1, 0],
-      2: [0, 1],
-      3: [-1, 0]
-    };
-    _this.myDirection = direction;
     _this.textureKey = textureKey;
     _this.scene = scene;
-    _this.playerX = playerX;
-    _this.playerY = playerY;
-    _this.myDirection = 0;
     scene.add.existing(_this);
     scene.physics.add.existing(_this);
 
     _this.addToUpdateList();
 
     _this.addToDisplayList();
-
-    _this.body.reset(playerX, playerY);
 
     _this.setActive(true);
 
@@ -420,7 +408,7 @@ function (_super) {
       case 3:
         _this.setRotation(0);
 
-        _this.xSpeed = -100;
+        _this.xSpeed = -200;
         _this.ySpeed = 0;
         break;
 
@@ -428,13 +416,13 @@ function (_super) {
         _this.setRotation(1.5708);
 
         _this.xSpeed = 0;
-        _this.ySpeed = -100;
+        _this.ySpeed = -200;
         break;
 
       case 1:
         _this.setRotation(3.14159);
 
-        _this.xSpeed = 100;
+        _this.xSpeed = 200;
         _this.ySpeed = 0;
         break;
 
@@ -442,7 +430,7 @@ function (_super) {
         _this.setRotation(4.71239);
 
         _this.xSpeed = 0;
-        _this.ySpeed = 100;
+        _this.ySpeed = 200;
         break;
     }
 
@@ -456,8 +444,6 @@ function (_super) {
 
     this.setVelocity(this.xSpeed, this.ySpeed);
   };
-
-  Spell.prototype.Cast = function (x, y, direction) {};
 
   return Spell;
 }(Phaser.Physics.Arcade.Sprite);
@@ -515,6 +501,7 @@ function (_super) {
     var _this = _super.call(this, scene.physics.world, scene) || this;
 
     _this.scene = scene;
+    _this.defaultKey = "spells";
     return _this;
   }
 
@@ -533,10 +520,6 @@ function (_super) {
 
     this.add(spell);
   };
-
-  SpellManager.prototype.Remove = function () {};
-
-  SpellManager.prototype.update = function () {};
 
   return SpellManager;
 }(Phaser.Physics.Arcade.Group);
@@ -759,7 +742,6 @@ function (_super) {
   Player.prototype.update = function () {
     this.Movement();
     this.ChangeSpell();
-    this.spellManager.update();
 
     if (this.health == 0) {
       this.scene.scene.restart();
@@ -920,7 +902,10 @@ function (_super) {
   __extends(Walkers, _super);
 
   function Walkers(scene) {
-    return _super.call(this, scene.physics.world, scene) || this;
+    var _this = _super.call(this, scene.physics.world, scene) || this;
+
+    _this.defaultKey = "walkers";
+    return _this;
   }
 
   return Walkers;
@@ -1330,6 +1315,7 @@ function (_super) {
 
     _this.WALL = 510;
     _this.tileSize = 16;
+    _this.score = 0;
     return _this;
   }
 
@@ -1367,19 +1353,14 @@ function (_super) {
     xPos = rooms[exitRoom]["center"].x * this.tileSize;
     yPos = rooms[exitRoom]["center"].y * this.tileSize;
     this.exit = new exit_1.default(this, xPos, yPos, "Portal", this.mage);
-    this.healthText = this.add.text(16, 16, "Health: " + this.mage.health, {
-      fontSize: '32px',
-      color: "#ffffff"
-    });
-    this.healthText.setScrollFactor(0);
     this.enemies = new Walkers_1.default(this);
     rooms.forEach(function (room) {
       var eCount = Math.floor(Math.random() * 8);
 
       if (room != rooms[spawnRoom]) {
         for (var e = 0; e < eCount; e++) {
-          var randX = Math.floor(Math.random() * (room.x + room.w - room.x) + room.x);
-          var randY = Math.floor(Math.random() * (room.y + room.h - room.y) + room.y);
+          var randX = Math.floor(Math.random() * (room.x + (room.w - 1) - (room.x + 1)) + room.x + 1);
+          var randY = Math.floor(Math.random() * (room.y + (room.h - 1) - (room.y + 1)) + room.y + 1);
           var xPos_1 = randX * _this.tileSize;
           var yPos_1 = randY * _this.tileSize;
           var newEnemy = new walker_1.default(_this, xPos_1, yPos_1, "enemy", _this.mage);
@@ -1390,12 +1371,30 @@ function (_super) {
         }
       }
     });
+    this.physics.add.collider(this.enemies, this.mage.spellManager, function (enemy, spell) {
+      enemy.destroy();
+      spell.destroy();
+    });
+    this.physics.add.collider(this.mage.spellManager, layer, function (spell) {
+      spell.destroy();
+    });
+    this.healthText = this.add.text(16, 16, "Health: " + this.mage.health, {
+      fontSize: '32px',
+      color: "#ffffff"
+    });
+    this.scoreText = this.add.text(16, 64, "Score: " + this.score, {
+      fontSize: '32px',
+      color: "#ffffff"
+    });
+    this.healthText.setScrollFactor(0);
+    this.scoreText.setScrollFactor(0);
   };
 
   PlayScene.prototype.update = function (time, delta) {
     this.mage.update();
     this.exit.update();
     this.healthText.setText("Health: " + this.mage.health);
+    this.scoreText.setText("Score: " + this.score);
   };
 
   return PlayScene;
@@ -1458,7 +1457,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34841" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44843" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

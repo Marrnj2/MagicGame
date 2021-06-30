@@ -164,7 +164,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
     update(){
         this.Movement()
         this.ChangeSpell()
-        this.spellManager.update()
         if(this.health == 0){
             this.scene.scene.restart()
         }
