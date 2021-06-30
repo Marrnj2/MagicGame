@@ -43,7 +43,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         });
         this.anims.create({
             key:"idle-up",
-            frameRate:1,
+            frameRate:7,
             frames:this.anims.generateFrameNames("Mage",{
                 start:0,
                 end:0
@@ -61,7 +61,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         });
         this.anims.create({
             key:"idle-left",
-            frameRate:1,
+            frameRate:7,
             frames:this.anims.generateFrameNames("Mage",{
                 start:9,
                 end:9
@@ -79,7 +79,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         });
         this.anims.create({
             key:"idle-down",
-            frameRate:1,
+            frameRate:7,
             frames:this.anims.generateFrameNames("Mage",{
                 start:18,
                 end:18
@@ -91,7 +91,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
             frameRate:7,
             frames:this.anims.generateFrameNames("Mage",{
                 start:27,
-                end:37
+                end:35
             }),
             repeat: -1
         });
@@ -114,14 +114,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
             console.log("spell 1")
 
         })
+        // this.keyboard.on('keydown-TWO',()=>{
+        //     this.currentSpell = 1
+        //     console.log("spell 2")
+
+        // })
         this.keyboard.on('keydown-TWO',()=>{
             this.currentSpell = 1
-            console.log("spell 2")
-
-        })
-        this.keyboard.on('keydown-THREE',()=>{
-            this.currentSpell = 2
-            console.log("spell 3")
         })
         this.keyboard.on('keydown-W',() =>{
             this.setVelocityY(-250)

@@ -18,7 +18,7 @@ export default class Walker extends Phaser.Physics.Arcade.Sprite{
         this.play("down")
     }
 
-    update(){
+    preUpdate(){
         let playerBody = this.player.GetBody()
         if(Phaser.Math.Distance.BetweenPoints(this.body,playerBody) < 300){
             this.scene.physics.moveToObject(this,playerBody,50)

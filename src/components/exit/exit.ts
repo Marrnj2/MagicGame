@@ -11,6 +11,7 @@ export default class Exit extends Phaser.Physics.Arcade.Sprite{
         this.addToUpdateList()
         this.addToDisplayList()
         this.player = player
+        this.anims.play("Portal")
     }
 
     update(){

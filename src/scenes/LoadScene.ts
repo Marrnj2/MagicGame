@@ -25,7 +25,11 @@ export class LoadScene extends Phaser.Scene{
             frameWidth:48,
             frameHeight:48
         })
-        this.load.image("IceBall","./assets/IceBall.png")
+        // this.load.image("IceBall","./assets/IceBall.png")
+        this.load.spritesheet("Portal","./assets/Portal.png",{
+            frameWidth:32,
+            frameHeight:32
+        })
         
     }
     create(){
@@ -35,6 +39,15 @@ export class LoadScene extends Phaser.Scene{
             frames:this.anims.generateFrameNames("EarthBall",{
                 start:0,
                 end:12
+            }),
+            repeat: -1
+        });
+        this.anims.create({
+            key:"Portal",
+            frameRate:10,
+            frames:this.anims.generateFrameNames("Portal",{
+                start:0,
+                end:16
             }),
             repeat: -1
         });

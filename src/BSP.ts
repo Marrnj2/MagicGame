@@ -13,8 +13,8 @@ export default class BSP{
     readonly minSize = 6
     readonly HEIGHT = 80
     readonly WIDTH = 80
-    width:number = 50
-    height:number = 50
+    width:number
+    height:number
     roomCount:number
     world:any
     leafs:any[]
@@ -35,12 +35,10 @@ export default class BSP{
         rooms.forEach(room =>{
             let roomPos = (room.y * this.width) + room.x
             for(let i = 0; i < room.w; i++){
-                this.world[roomPos + i] = this.GROUND
-                this.world[(roomPos + i) + (this.width * (room.h - 1))] = this.GROUND
+                this.world[roomPos + i] = this.WALL
                 for(let j = 0; j < room.h; j++){
                     let index = roomPos + (this.width * j)
-                    this.world[index] = this.GROUND
-                    this.world[index + room.w - 1] = this.GROUND
+                    this.world[index] = this.WALL
                 }
             }
         })
@@ -67,8 +65,10 @@ export default class BSP{
             for(let x = nodeLeft?.container.center.x; x <= nodeRight.container.center.x; x++){
                 let xPos =  nodeLeft.container.center.y * this.width + x
                 let xPosPad =  (nodeLeft.container.center.y + 1) * this.width + x
-                this.world[xPos] = this.WALL
-                this.world[xPosPad] = this.WALL
+                this.world[xPos] = this.GROUND
+                this.world[xPosPad] = this.GROUND
+                xPosPad =  (nodeLeft.container.center.y - 1) * this.width + x
+                this.world[xPosPad] = this.GROUND
 
             }
         }
@@ -76,9 +76,11 @@ export default class BSP{
             for(let y = nodeLeft?.container.center.y; y <= nodeRight.container.center.y; y++){
                 let yPos =  y * this.width + nodeLeft.container.center.x
                 let yPosPad =  y * this.width + nodeLeft.container.center.x + 1
+                this.world[yPos] = this.GROUND
+                this.world[yPosPad] = this.GROUND
+                yPosPad =  y * this.width + nodeLeft.container.center.x - 1
+                this.world[yPosPad] = this.GROUND
 
-                this.world[yPos] = this.WALL
-                this.world[yPosPad] = this.WALL
 
             }
         }
