@@ -210,9 +210,22 @@ function (_super) {
       frameWidth: 32,
       frameHeight: 32
     });
+    this.load.spritesheet("Loot", "./assets/loot.png", {
+      frameWidth: 32,
+      frameHeight: 32
+    });
   };
 
   LoadScene.prototype.create = function () {
+    this.anims.create({
+      key: "Loot",
+      frameRate: 10,
+      frames: this.anims.generateFrameNames("Loot", {
+        start: 0,
+        end: 1
+      }),
+      repeat: -1
+    });
     this.anims.create({
       key: "EarthBall",
       frameRate: 10,
@@ -600,6 +613,7 @@ function (_super) {
     _this.keyboard.addKeys('W,A,S,D,ONE,TWO,THREE');
 
     _this.currentSpell = 0;
+    _this.score = 0;
 
     _this.create();
 
@@ -1248,6 +1262,78 @@ function (_super) {
 }(Phaser.Physics.Arcade.Sprite);
 
 exports.default = Exit;
+},{}],"src/components/NPC/loot.ts":[function(require,module,exports) {
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) {
+        if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+      }
+    };
+
+    return _extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+
+    _extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var Loot =
+/** @class */
+function (_super) {
+  __extends(Loot, _super);
+
+  function Loot(scene, x, y, texture, player) {
+    var _this = _super.call(this, scene, x, y, texture) || this;
+
+    _this.scene = scene;
+    scene.add.existing(_this);
+    scene.physics.add.existing(_this);
+
+    _this.addToUpdateList();
+
+    _this.addToDisplayList();
+
+    _this.player = player;
+
+    _this.anims.play(texture);
+
+    return _this;
+  }
+
+  Loot.prototype.preUpdate = function () {
+    var playerBody = this.player.GetBody();
+
+    if (Phaser.Math.Distance.BetweenPoints(this.body, playerBody) < 30) {
+      this.player.score += 100;
+      this.visible = false;
+      this.active = false;
+    }
+  };
+
+  return Loot;
+}(Phaser.Physics.Arcade.Sprite);
+
+exports.default = Loot;
 },{}],"src/scenes/PlayScene.ts":[function(require,module,exports) {
 "use strict";
 
@@ -1302,6 +1388,8 @@ var BSP_1 = __importDefault(require("../BSP"));
 
 var exit_1 = __importDefault(require("../components/exit/exit"));
 
+var loot_1 = __importDefault(require("../components/NPC/loot"));
+
 var PlayScene =
 /** @class */
 function (_super) {
@@ -1315,7 +1403,6 @@ function (_super) {
 
     _this.WALL = 510;
     _this.tileSize = 16;
-    _this.score = 0;
     return _this;
   }
 
@@ -1369,6 +1456,16 @@ function (_super) {
 
           _this.enemies.add(newEnemy);
         }
+
+        var lCount = Math.floor(Math.random() * 4);
+
+        for (var l = 0; l < lCount; l++) {
+          var randX = Math.floor(Math.random() * (room.x + (room.w - 1) - (room.x + 1)) + room.x + 1);
+          var randY = Math.floor(Math.random() * (room.y + (room.h - 1) - (room.y + 1)) + room.y + 1);
+          var xPos_2 = randX * _this.tileSize;
+          var yPos_2 = randY * _this.tileSize;
+          var loot = new loot_1.default(_this, xPos_2, yPos_2, "Loot", _this.mage);
+        }
       }
     });
     this.physics.add.collider(this.enemies, this.mage.spellManager, function (enemy, spell) {
@@ -1382,7 +1479,7 @@ function (_super) {
       fontSize: '32px',
       color: "#ffffff"
     });
-    this.scoreText = this.add.text(16, 64, "Score: " + this.score, {
+    this.scoreText = this.add.text(16, 64, "Score: " + this.mage.score, {
       fontSize: '32px',
       color: "#ffffff"
     });
@@ -1394,14 +1491,14 @@ function (_super) {
     this.mage.update();
     this.exit.update();
     this.healthText.setText("Health: " + this.mage.health);
-    this.scoreText.setText("Score: " + this.score);
+    this.scoreText.setText("Score: " + this.mage.score);
   };
 
   return PlayScene;
 }(Phaser.Scene);
 
 exports.PlayScene = PlayScene;
-},{"../CST":"src/CST.ts","../components/playerComponents/Player":"src/components/playerComponents/Player.ts","../components/NPC/walker":"src/components/NPC/walker.ts","../components/NPC/Walkers":"src/components/NPC/Walkers.ts","../BSP":"src/BSP.ts","../components/exit/exit":"src/components/exit/exit.ts"}],"src/main.ts":[function(require,module,exports) {
+},{"../CST":"src/CST.ts","../components/playerComponents/Player":"src/components/playerComponents/Player.ts","../components/NPC/walker":"src/components/NPC/walker.ts","../components/NPC/Walkers":"src/components/NPC/Walkers.ts","../BSP":"src/BSP.ts","../components/exit/exit":"src/components/exit/exit.ts","../components/NPC/loot":"src/components/NPC/loot.ts"}],"src/main.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1457,7 +1554,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44843" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34933" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

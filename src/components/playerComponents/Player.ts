@@ -7,6 +7,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
     currentSpell: number
     direction:number
     health:number
+    score:number
     constructor(scene:Phaser.Scene, x:number,y:number, textrue:string,
         keyboard:Phaser.Input.Keyboard.KeyboardPlugin){
         super(scene,x,y,textrue);
@@ -25,6 +26,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite{
         this.spellManager = new SpellManager(this.scene);
         this.keyboard.addKeys('W,A,S,D,ONE,TWO,THREE');
         this.currentSpell = 0;
+        this.score = 0;
         this.create()
     }
     preload(){
