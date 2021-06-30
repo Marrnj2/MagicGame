@@ -1058,8 +1058,6 @@ function () {
     this.minSize = 6;
     this.HEIGHT = 80;
     this.WIDTH = 80;
-    this.width = 50;
-    this.height = 50;
     this.width = this.WIDTH;
     this.height = this.HEIGHT;
     this.roomCount = 0;
@@ -1080,13 +1078,13 @@ function () {
       var roomPos = room.y * _this.width + room.x;
 
       for (var i = 0; i < room.w; i++) {
-        _this.world[roomPos + i] = _this.GROUND;
-        _this.world[roomPos + i + _this.width * (room.h - 1)] = _this.GROUND;
+        _this.world[roomPos + i] = _this.WALL;
+        _this.world[roomPos + i + _this.width * (room.h - 1)] = _this.WALL;
 
         for (var j = 0; j < room.h; j++) {
           var index = roomPos + _this.width * j;
-          _this.world[index] = _this.GROUND;
-          _this.world[index + room.w - 1] = _this.GROUND;
+          _this.world[index] = _this.WALL;
+          _this.world[index + room.w - 1] = _this.WALL;
         }
       }
     });
@@ -1117,8 +1115,8 @@ function () {
       for (var x = nodeLeft === null || nodeLeft === void 0 ? void 0 : nodeLeft.container.center.x; x <= nodeRight.container.center.x; x++) {
         var xPos = nodeLeft.container.center.y * this.width + x;
         var xPosPad = (nodeLeft.container.center.y + 1) * this.width + x;
-        this.world[xPos] = this.WALL;
-        this.world[xPosPad] = this.WALL;
+        this.world[xPos] = this.GROUND;
+        this.world[xPosPad] = this.GROUND;
       }
     }
 
@@ -1126,8 +1124,8 @@ function () {
       for (var y = nodeLeft === null || nodeLeft === void 0 ? void 0 : nodeLeft.container.center.y; y <= nodeRight.container.center.y; y++) {
         var yPos = y * this.width + nodeLeft.container.center.x;
         var yPosPad = y * this.width + nodeLeft.container.center.x + 1;
-        this.world[yPos] = this.WALL;
-        this.world[yPosPad] = this.WALL;
+        this.world[yPos] = this.GROUND;
+        this.world[yPosPad] = this.GROUND;
       }
     }
   };
@@ -1444,7 +1442,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43905" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "46707" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
