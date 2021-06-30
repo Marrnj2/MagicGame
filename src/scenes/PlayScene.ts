@@ -43,7 +43,7 @@ export class PlayScene extends Phaser.Scene{
         console.log(rooms[exitRoom]["center"].x,rooms[exitRoom]["center"].y)
         let xPos = rooms[exitRoom]["center"].x * this.tileSize
         let yPos = rooms[exitRoom]["center"].y * this.tileSize
-        this.exit = new Exit(this,xPos,yPos,"Mage",this.mage)
+        this.exit = new Exit(this,xPos,yPos,"Portal",this.mage)
         this.healthText = this.add.text(16, 16, `Health: ${this.mage.health}`, { fontSize: '32px' ,color:"#ffffff"});
         this.healthText.setScrollFactor(0)
         this.testEnemy = new Walker(this,150,150,"enemy",this.mage)

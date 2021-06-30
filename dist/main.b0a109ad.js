@@ -206,6 +206,10 @@ function (_super) {
       frameHeight: 48
     });
     this.load.image("IceBall", "./assets/IceBall.png");
+    this.load.spritesheet("Portal", "./assets/Portal.png", {
+      frameWidth: 32,
+      frameHeight: 32
+    });
   };
 
   LoadScene.prototype.create = function () {
@@ -215,6 +219,15 @@ function (_super) {
       frames: this.anims.generateFrameNames("EarthBall", {
         start: 0,
         end: 12
+      }),
+      repeat: -1
+    });
+    this.anims.create({
+      key: "Portal",
+      frameRate: 10,
+      frames: this.anims.generateFrameNames("Portal", {
+        start: 0,
+        end: 16
       }),
       repeat: -1
     });
@@ -1253,6 +1266,9 @@ function (_super) {
     _this.addToDisplayList();
 
     _this.player = player;
+
+    _this.anims.play("Portal");
+
     return _this;
   }
 
@@ -1365,7 +1381,7 @@ function (_super) {
     console.log(rooms[exitRoom]["center"].x, rooms[exitRoom]["center"].y);
     var xPos = rooms[exitRoom]["center"].x * this.tileSize;
     var yPos = rooms[exitRoom]["center"].y * this.tileSize;
-    this.exit = new exit_1.default(this, xPos, yPos, "Mage", this.mage);
+    this.exit = new exit_1.default(this, xPos, yPos, "Portal", this.mage);
     this.healthText = this.add.text(16, 16, "Health: " + this.mage.health, {
       fontSize: '32px',
       color: "#ffffff"
@@ -1442,7 +1458,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "46707" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42721" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
