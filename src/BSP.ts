@@ -36,11 +36,9 @@ export default class BSP{
             let roomPos = (room.y * this.width) + room.x
             for(let i = 0; i < room.w; i++){
                 this.world[roomPos + i] = this.WALL
-                this.world[(roomPos + i) + (this.width * (room.h - 1))] = this.WALL
                 for(let j = 0; j < room.h; j++){
                     let index = roomPos + (this.width * j)
                     this.world[index] = this.WALL
-                    this.world[index + room.w - 1] = this.WALL
                 }
             }
         })

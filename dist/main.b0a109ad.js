@@ -397,10 +397,7 @@ function (_super) {
       2: [0, 1],
       3: [-1, 0]
     };
-    _this.BOXVALUE = {
-      1: 180,
-      3: 0
-    };
+    _this.myDirection = direction;
     _this.textureKey = textureKey;
     _this.scene = scene;
     _this.playerX = playerX;
@@ -413,8 +410,41 @@ function (_super) {
 
     _this.addToDisplayList();
 
-    _this.xSpeed = _this.SPEED * _this.DIRECTIONS[_this.myDirection][0];
-    _this.ySpeed = _this.SPEED * _this.DIRECTIONS[_this.myDirection][1];
+    _this.body.reset(playerX, playerY);
+
+    _this.setActive(true);
+
+    _this.setVisible(true);
+
+    switch (direction) {
+      case 3:
+        _this.setRotation(0);
+
+        _this.xSpeed = -100;
+        _this.ySpeed = 0;
+        break;
+
+      case 0:
+        _this.setRotation(1.5708);
+
+        _this.xSpeed = 0;
+        _this.ySpeed = -100;
+        break;
+
+      case 1:
+        _this.setRotation(3.14159);
+
+        _this.xSpeed = 100;
+        _this.ySpeed = 0;
+        break;
+
+      case 2:
+        _this.setRotation(4.71239);
+
+        _this.xSpeed = 0;
+        _this.ySpeed = 100;
+        break;
+    }
 
     _this.play(textureKey);
 
@@ -427,34 +457,7 @@ function (_super) {
     this.setVelocity(this.xSpeed, this.ySpeed);
   };
 
-  Spell.prototype.Cast = function (x, y, direction) {
-    this.myDirection = direction;
-    this.xSpeed = this.SPEED * this.DIRECTIONS[this.myDirection][0];
-    this.ySpeed = this.SPEED * this.DIRECTIONS[this.myDirection][1];
-    this.body.reset(x, y);
-    this.setActive(true);
-    this.setVisible(true);
-    this.setVelocityX(this.xSpeed);
-    this.setVelocityY(this.ySpeed);
-
-    switch (direction) {
-      case 3:
-        this.setRotation(0);
-        break;
-
-      case 0:
-        this.setRotation(1.5708);
-        break;
-
-      case 1:
-        this.setRotation(3.14159);
-        break;
-
-      case 2:
-        this.setRotation(4.71239);
-        break;
-    }
-  };
+  Spell.prototype.Cast = function (x, y, direction) {};
 
   return Spell;
 }(Phaser.Physics.Arcade.Sprite);
@@ -516,10 +519,19 @@ function (_super) {
   }
 
   SpellManager.prototype.CreateNewSpell = function (index, x, y, direction) {
-    var spellList = [new spell_1.default(this.scene, 0, 0, "FireBall", 0), // new Spell(this.scene,0,0,"IceBall",0),
-    new spell_1.default(this.scene, 0, 0, "EarthBall", 0)];
-    var spell = spellList[index];
-    spell.Cast(x, y, direction);
+    var spell;
+
+    switch (index) {
+      case 0:
+        spell = new spell_1.default(this.scene, x, y, "FireBall", direction);
+        break;
+
+      case 1:
+        spell = new spell_1.default(this.scene, x, y, "EarthBall", direction);
+        break;
+    }
+
+    this.add(spell);
   };
 
   SpellManager.prototype.Remove = function () {};
@@ -1057,12 +1069,10 @@ function () {
 
       for (var i = 0; i < room.w; i++) {
         _this.world[roomPos + i] = _this.WALL;
-        _this.world[roomPos + i + _this.width * (room.h - 1)] = _this.WALL;
 
         for (var j = 0; j < room.h; j++) {
           var index = roomPos + _this.width * j;
           _this.world[index] = _this.WALL;
-          _this.world[index + room.w - 1] = _this.WALL;
         }
       }
     });
@@ -1344,15 +1354,18 @@ function (_super) {
     var terrain = map.addTilesetImage("terrain", "terrain");
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     var keyboard = this.input.keyboard;
-    this.mage = new Player_1.Player(this, map.width, map.height, "Mage", keyboard);
+    var rooms = bsp.leafs;
+    var spawnRoom = Math.floor(Math.random() * rooms.length + 0);
+    var xPos = rooms[spawnRoom]["center"].x * this.tileSize;
+    var yPos = rooms[spawnRoom]["center"].y * this.tileSize;
+    this.mage = new Player_1.Player(this, xPos, yPos, "Mage", keyboard);
     this.cameras.main.setSize(800, 600);
     this.cameras.main.startFollow(this.mage);
     this.cameras.main.setBounds(0, 0, 80 * this.tileSize, this.tileSize * 80);
     this.physics.add.collider(this.mage, layer);
-    var rooms = bsp.leafs;
     var exitRoom = Math.floor(Math.random() * rooms.length + 0);
-    var xPos = rooms[exitRoom]["center"].x * this.tileSize;
-    var yPos = rooms[exitRoom]["center"].y * this.tileSize;
+    xPos = rooms[exitRoom]["center"].x * this.tileSize;
+    yPos = rooms[exitRoom]["center"].y * this.tileSize;
     this.exit = new exit_1.default(this, xPos, yPos, "Portal", this.mage);
     this.healthText = this.add.text(16, 16, "Health: " + this.mage.health, {
       fontSize: '32px',
@@ -1361,13 +1374,21 @@ function (_super) {
     this.healthText.setScrollFactor(0);
     this.enemies = new Walkers_1.default(this);
     rooms.forEach(function (room) {
-      var xPos = room["center"].x * _this.tileSize;
-      var yPos = room["center"].y * _this.tileSize;
-      var newEnemy = new walker_1.default(_this, xPos, yPos, "enemy", _this.mage);
+      var eCount = Math.floor(Math.random() * 8);
 
-      _this.physics.add.collider(newEnemy, layer);
+      if (room != rooms[spawnRoom]) {
+        for (var e = 0; e < eCount; e++) {
+          var randX = Math.floor(Math.random() * (room.x + room.w - room.x) + room.x);
+          var randY = Math.floor(Math.random() * (room.y + room.h - room.y) + room.y);
+          var xPos_1 = randX * _this.tileSize;
+          var yPos_1 = randY * _this.tileSize;
+          var newEnemy = new walker_1.default(_this, xPos_1, yPos_1, "enemy", _this.mage);
 
-      _this.enemies.add(newEnemy);
+          _this.physics.add.collider(newEnemy, layer);
+
+          _this.enemies.add(newEnemy);
+        }
+      }
     });
   };
 
@@ -1437,7 +1458,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43201" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34841" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

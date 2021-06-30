@@ -3,6 +3,7 @@ import Spell from "../spells/spell";
 
 export default class SpellManager extends Phaser.Physics.Arcade.Group{
     scene: Phaser.Scene
+
     constructor(scene:Phaser.Scene){
         super(scene.physics.world,scene)
         this.scene = scene
@@ -11,13 +12,16 @@ export default class SpellManager extends Phaser.Physics.Arcade.Group{
 
     }
     CreateNewSpell(index:number,x:number,y:number,direction:number){
-        let spellList = [
-            new Spell(this.scene,0,0,"FireBall",0),
-            // new Spell(this.scene,0,0,"IceBall",0),
-            new Spell(this.scene,0,0,"EarthBall",0)
-        ]
-        let spell = spellList[index]
-            spell.Cast(x,y,direction)
+        let spell:Spell
+        switch(index){
+            case 0:
+                spell = new Spell(this.scene,x,y,"FireBall",direction)
+            break
+            case 1:
+                spell = new Spell(this.scene,x,y,"EarthBall",direction)
+            break;
+        }
+        this.add(spell!)
         
     }
     Remove(){
