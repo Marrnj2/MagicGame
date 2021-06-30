@@ -1,4 +1,4 @@
-export default abstract class Spell extends Phaser.Physics.Arcade.Sprite{
+export default class Spell extends Phaser.Physics.Arcade.Sprite{
     readonly SPEED = 200
     readonly DIRECTIONS:{[index:number]:[x:number,y:number]} = {
         0:[0,-1],
@@ -61,5 +61,4 @@ export default abstract class Spell extends Phaser.Physics.Arcade.Sprite{
                 break;
         }
     }
-    abstract Behavior() : any
 }

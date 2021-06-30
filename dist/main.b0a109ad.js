@@ -204,8 +204,8 @@ function (_super) {
     this.load.spritesheet("EarthBall", "./assets/EarthBall.png", {
       frameWidth: 48,
       frameHeight: 48
-    });
-    this.load.image("IceBall", "./assets/IceBall.png");
+    }); // this.load.image("IceBall","./assets/IceBall.png")
+
     this.load.spritesheet("Portal", "./assets/Portal.png", {
       frameWidth: 32,
       frameHeight: 32
@@ -460,7 +460,7 @@ function (_super) {
 }(Phaser.Physics.Arcade.Sprite);
 
 exports.default = Spell;
-},{}],"src/components/playerComponents/spells/basicspell.ts":[function(require,module,exports) {
+},{}],"src/components/playerComponents/spellbook/SpellManager.ts":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -501,90 +501,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var spell_1 = __importDefault(require("./spell"));
-
-var BasicSpell =
-/** @class */
-function (_super) {
-  __extends(BasicSpell, _super);
-
-  function BasicSpell(scene, playerX, playerY, name, direction) {
-    var _this = _super.call(this, scene, playerX, playerY, name, direction) || this;
-
-    _this.TRAVELDISTANCE = 10;
-
-    if (_this.myDirection % 2 === 0) {
-      _this.angle = -90 * _this.DIRECTIONS[_this.myDirection][1];
-      _this.hitboxX = 10;
-      _this.hitboxY = 70;
-    } else {
-      _this.angle = _this.BOXVALUE[_this.myDirection];
-      _this.hitboxX = 70;
-      _this.hitboxY = 10;
-    }
-
-    _this.setSize(_this.hitboxX, _this.hitboxY);
-
-    _this.setAngle(_this.angle);
-
-    return _this;
-  }
-
-  BasicSpell.prototype.CalculateBox = function () {};
-
-  BasicSpell.prototype.Behavior = function () {
-    if (Phaser.Math.Distance.Between(this.x, this.y, this.playerX, this.playerY) > 100) {
-      this.setActive(false);
-      this.setVisible(false);
-    }
-  };
-
-  return BasicSpell;
-}(spell_1.default);
-
-exports.default = BasicSpell;
-},{"./spell":"src/components/playerComponents/spells/spell.ts"}],"src/components/playerComponents/spellbook/SpellManager.ts":[function(require,module,exports) {
-"use strict";
-
-var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) {
-        if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-      }
-    };
-
-    return _extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-
-    _extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var basicspell_1 = __importDefault(require("../spells/basicspell"));
+var spell_1 = __importDefault(require("../spells/spell"));
 
 var SpellManager =
 /** @class */
@@ -599,7 +516,8 @@ function (_super) {
   }
 
   SpellManager.prototype.CreateNewSpell = function (index, x, y, direction) {
-    var spellList = [new basicspell_1.default(this.scene, 0, 0, "FireBall", 0), new basicspell_1.default(this.scene, 0, 0, "IceBall", 0), new basicspell_1.default(this.scene, 0, 0, "EarthBall", 0)];
+    var spellList = [new spell_1.default(this.scene, 0, 0, "FireBall", 0), // new Spell(this.scene,0,0,"IceBall",0),
+    new spell_1.default(this.scene, 0, 0, "EarthBall", 0)];
     var spell = spellList[index];
     spell.Cast(x, y, direction);
   };
@@ -612,7 +530,7 @@ function (_super) {
 }(Phaser.Physics.Arcade.Group);
 
 exports.default = SpellManager;
-},{"../spells/basicspell":"src/components/playerComponents/spells/basicspell.ts"}],"src/components/playerComponents/Player.ts":[function(require,module,exports) {
+},{"../spells/spell":"src/components/playerComponents/spells/spell.ts"}],"src/components/playerComponents/Player.ts":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -709,7 +627,7 @@ function (_super) {
     });
     this.anims.create({
       key: "idle-up",
-      frameRate: 1,
+      frameRate: 7,
       frames: this.anims.generateFrameNames("Mage", {
         start: 0,
         end: 0
@@ -727,7 +645,7 @@ function (_super) {
     });
     this.anims.create({
       key: "idle-left",
-      frameRate: 1,
+      frameRate: 7,
       frames: this.anims.generateFrameNames("Mage", {
         start: 9,
         end: 9
@@ -745,7 +663,7 @@ function (_super) {
     });
     this.anims.create({
       key: "idle-down",
-      frameRate: 1,
+      frameRate: 7,
       frames: this.anims.generateFrameNames("Mage", {
         start: 18,
         end: 18
@@ -757,7 +675,7 @@ function (_super) {
       frameRate: 7,
       frames: this.anims.generateFrameNames("Mage", {
         start: 27,
-        end: 37
+        end: 35
       }),
       repeat: -1
     });
@@ -776,14 +694,13 @@ function (_super) {
     this.keyboard.on('keydown-ONE', function () {
       _this.currentSpell = 0;
       console.log("spell 1");
-    });
+    }); // this.keyboard.on('keydown-TWO',()=>{
+    //     this.currentSpell = 1
+    //     console.log("spell 2")
+    // })
+
     this.keyboard.on('keydown-TWO', function () {
       _this.currentSpell = 1;
-      console.log("spell 2");
-    });
-    this.keyboard.on('keydown-THREE', function () {
-      _this.currentSpell = 2;
-      console.log("spell 3");
     });
     this.keyboard.on('keydown-W', function () {
       _this.setVelocityY(-250);
@@ -932,7 +849,7 @@ function (_super) {
     return _this;
   }
 
-  Walker.prototype.update = function () {
+  Walker.prototype.preUpdate = function () {
     var playerBody = this.player.GetBody();
 
     if (Phaser.Math.Distance.BetweenPoints(this.body, playerBody) < 300) {
@@ -950,6 +867,54 @@ function (_super) {
 }(Phaser.Physics.Arcade.Sprite);
 
 exports.default = Walker;
+},{}],"src/components/NPC/Walkers.ts":[function(require,module,exports) {
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) {
+        if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+      }
+    };
+
+    return _extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+
+    _extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var Walkers =
+/** @class */
+function (_super) {
+  __extends(Walkers, _super);
+
+  function Walkers(scene) {
+    return _super.call(this, scene.physics.world, scene) || this;
+  }
+
+  return Walkers;
+}(Phaser.Physics.Arcade.Group);
+
+exports.default = Walkers;
 },{}],"src/BSP/BinaryTree.ts":[function(require,module,exports) {
 "use strict";
 
@@ -1130,6 +1095,8 @@ function () {
         var xPosPad = (nodeLeft.container.center.y + 1) * this.width + x;
         this.world[xPos] = this.GROUND;
         this.world[xPosPad] = this.GROUND;
+        xPosPad = (nodeLeft.container.center.y - 1) * this.width + x;
+        this.world[xPosPad] = this.GROUND;
       }
     }
 
@@ -1138,6 +1105,8 @@ function () {
         var yPos = y * this.width + nodeLeft.container.center.x;
         var yPosPad = y * this.width + nodeLeft.container.center.x + 1;
         this.world[yPos] = this.GROUND;
+        this.world[yPosPad] = this.GROUND;
+        yPosPad = y * this.width + nodeLeft.container.center.x - 1;
         this.world[yPosPad] = this.GROUND;
       }
     }
@@ -1332,6 +1301,8 @@ var Player_1 = require("../components/playerComponents/Player");
 
 var walker_1 = __importDefault(require("../components/NPC/walker"));
 
+var Walkers_1 = __importDefault(require("../components/NPC/Walkers"));
+
 var BSP_1 = __importDefault(require("../BSP"));
 
 var exit_1 = __importDefault(require("../components/exit/exit"));
@@ -1339,7 +1310,8 @@ var exit_1 = __importDefault(require("../components/exit/exit"));
 var PlayScene =
 /** @class */
 function (_super) {
-  __extends(PlayScene, _super);
+  __extends(PlayScene, _super); // enemiesArray:Phaser.GameObjects.GameObject[]
+
 
   function PlayScene() {
     var _this = _super.call(this, {
@@ -1357,6 +1329,8 @@ function (_super) {
   };
 
   PlayScene.prototype.create = function () {
+    var _this = this;
+
     var bsp = new BSP_1.default();
     var world = bsp.BSPController();
     var map = this.make.tilemap({
@@ -1377,8 +1351,6 @@ function (_super) {
     this.physics.add.collider(this.mage, layer);
     var rooms = bsp.leafs;
     var exitRoom = Math.floor(Math.random() * rooms.length + 0);
-    console.log(rooms[exitRoom]);
-    console.log(rooms[exitRoom]["center"].x, rooms[exitRoom]["center"].y);
     var xPos = rooms[exitRoom]["center"].x * this.tileSize;
     var yPos = rooms[exitRoom]["center"].y * this.tileSize;
     this.exit = new exit_1.default(this, xPos, yPos, "Portal", this.mage);
@@ -1387,13 +1359,20 @@ function (_super) {
       color: "#ffffff"
     });
     this.healthText.setScrollFactor(0);
-    this.testEnemy = new walker_1.default(this, 150, 150, "enemy", this.mage);
-    this.physics.add.collider(this.testEnemy, layer);
+    this.enemies = new Walkers_1.default(this);
+    rooms.forEach(function (room) {
+      var xPos = room["center"].x * _this.tileSize;
+      var yPos = room["center"].y * _this.tileSize;
+      var newEnemy = new walker_1.default(_this, xPos, yPos, "enemy", _this.mage);
+
+      _this.physics.add.collider(newEnemy, layer);
+
+      _this.enemies.add(newEnemy);
+    });
   };
 
   PlayScene.prototype.update = function (time, delta) {
     this.mage.update();
-    this.testEnemy.update();
     this.exit.update();
     this.healthText.setText("Health: " + this.mage.health);
   };
@@ -1402,7 +1381,7 @@ function (_super) {
 }(Phaser.Scene);
 
 exports.PlayScene = PlayScene;
-},{"../CST":"src/CST.ts","../components/playerComponents/Player":"src/components/playerComponents/Player.ts","../components/NPC/walker":"src/components/NPC/walker.ts","../BSP":"src/BSP.ts","../components/exit/exit":"src/components/exit/exit.ts"}],"src/main.ts":[function(require,module,exports) {
+},{"../CST":"src/CST.ts","../components/playerComponents/Player":"src/components/playerComponents/Player.ts","../components/NPC/walker":"src/components/NPC/walker.ts","../components/NPC/Walkers":"src/components/NPC/Walkers.ts","../BSP":"src/BSP.ts","../components/exit/exit":"src/components/exit/exit.ts"}],"src/main.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1426,7 +1405,7 @@ var game = new Phaser.Game({
   physics: {
     default: "arcade",
     arcade: {
-      debug: true
+      debug: false
     }
   }
 });
@@ -1458,7 +1437,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42721" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43201" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

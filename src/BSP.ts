@@ -69,6 +69,8 @@ export default class BSP{
                 let xPosPad =  (nodeLeft.container.center.y + 1) * this.width + x
                 this.world[xPos] = this.GROUND
                 this.world[xPosPad] = this.GROUND
+                xPosPad =  (nodeLeft.container.center.y - 1) * this.width + x
+                this.world[xPosPad] = this.GROUND
 
             }
         }
@@ -76,9 +78,11 @@ export default class BSP{
             for(let y = nodeLeft?.container.center.y; y <= nodeRight.container.center.y; y++){
                 let yPos =  y * this.width + nodeLeft.container.center.x
                 let yPosPad =  y * this.width + nodeLeft.container.center.x + 1
-
                 this.world[yPos] = this.GROUND
                 this.world[yPosPad] = this.GROUND
+                yPosPad =  y * this.width + nodeLeft.container.center.x - 1
+                this.world[yPosPad] = this.GROUND
+
 
             }
         }

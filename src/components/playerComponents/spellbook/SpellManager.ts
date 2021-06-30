@@ -12,9 +12,9 @@ export default class SpellManager extends Phaser.Physics.Arcade.Group{
     }
     CreateNewSpell(index:number,x:number,y:number,direction:number){
         let spellList = [
-            new BasicSpell(this.scene,0,0,"FireBall",0),
-            new BasicSpell(this.scene,0,0,"IceBall",0),
-            new BasicSpell(this.scene,0,0,"EarthBall",0)
+            new Spell(this.scene,0,0,"FireBall",0),
+            // new Spell(this.scene,0,0,"IceBall",0),
+            new Spell(this.scene,0,0,"EarthBall",0)
         ]
         let spell = spellList[index]
             spell.Cast(x,y,direction)
