@@ -1,4 +1,3 @@
-import BasicSpell from "../spells/basicspell";
 import Spell from "../spells/spell";
 
 export default class SpellManager extends Phaser.Physics.Arcade.Group{
@@ -7,9 +6,7 @@ export default class SpellManager extends Phaser.Physics.Arcade.Group{
     constructor(scene:Phaser.Scene){
         super(scene.physics.world,scene)
         this.scene = scene
-
-       
-
+        this.defaultKey = "spells"
     }
     CreateNewSpell(index:number,x:number,y:number,direction:number){
         let spell:Spell
@@ -22,13 +19,6 @@ export default class SpellManager extends Phaser.Physics.Arcade.Group{
             break;
         }
         this.add(spell!)
-        
-    }
-    Remove(){
-
-    }
-
-    update(){        
         
     }
 }

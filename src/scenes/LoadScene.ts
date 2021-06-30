@@ -30,9 +30,21 @@ export class LoadScene extends Phaser.Scene{
             frameWidth:32,
             frameHeight:32
         })
-        
+        this.load.spritesheet("Loot","./assets/loot.png",{
+            frameWidth:32,
+            frameHeight:32
+        })
     }
     create(){
+        this.anims.create({
+            key:"Loot",
+            frameRate:10,
+            frames:this.anims.generateFrameNames("Loot",{
+                start:0,
+                end:1
+            }),
+            repeat: -1
+        });
         this.anims.create({
             key:"EarthBall",
             frameRate:10,
